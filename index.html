@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudHyper Custom</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <style>
+        /* Reset and Font Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e2f;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #f06595);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0px 5px 15px rgba(240, 101, 149, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 8px 20px rgba(240, 101, 149, 0.6);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0px 5px 15px rgba(240, 101, 149, 0.4);
+        }
+
+        #fileContainer {
+            width: 100%;
+            max-width: 700px;
+            margin-top: 20px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .file-card {
+            background: #29293d;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .file-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .file-card strong {
+            font-size: 1.2rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .file-card pre {
+            background-color: #2e2e42;
+            padding: 12px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.95rem;
+            color: #d6d6d6;
+        }
+    </style>
+</head>
+<body>
+    <h1>CloudHyper Custom</h1>
+    <button id="createFile">Create File</button>
+    <button id="downloadZip">Download as ZIP</button>
+    <div id="fileContainer"></div>
+
+    <script>
+        const files = [];
+        
+        document.getElementById("createFile").addEventListener("click", () => {
+            const fileName = prompt("Enter the file name (with extension):");
+            if (fileName) {
+                const codeContent = prompt(`Enter code for ${fileName}:`);
+                if (codeContent !== null) {
+                    files.push({ name: fileName, content: codeContent });
+                    displayFiles();
+                }
+            }
+        });
+
+        function displayFiles() {
+            const container = document.getElementById("fileContainer");
+            container.innerHTML = '';
+            files.forEach(file => {
+                const fileDiv = document.createElement("div");
+                fileDiv.classList.add("file-card");
+                fileDiv.innerHTML = `<strong>${file.name}</strong><pre>${file.content}</pre>`;
+                container.appendChild(fileDiv);
+            });
+        }
+
+        document.getElementById("downloadZip").addEventListener("click", () => {
+            const zip = new JSZip();
+            files.forEach(file => {
+                zip.file(file.name, file.content);
+            });
+            zip.generateAsync({ type: "blob" })
+                .then(blob => {
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = "CloudHyperCustomFiles.zip";
+                    link.click();
+                });
+        });
+    </script>
+</body>
+</html>
